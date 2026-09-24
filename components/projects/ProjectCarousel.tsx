@@ -5,13 +5,19 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { cn } from "cn";
 import type { Project } from "@/types/content";
+
+/**
+ * Desktop shows 3 cards per page and there are 5 projects, so pagination is
+ * two fixed pages of 3 slots: slides [0..2] and [3..4]. Page starts are chunk
+ * offsets, which also stay meaningful at md (2-up) and mobile (1-up): clicking
+ * page 2 always lands on the first project of the second chunk.
+ */
+const SLIDES_PER_PAGE = 3;
 
 export function ProjectCarousel({
   projects,
@@ -40,6 +46,12 @@ export function ProjectCarousel({
     };
   }, [api, onSelectSlide]);
 
+  const pageCount = Math.ceil(projects.length / SLIDES_PER_PAGE);
+  const activePage = Math.min(
+    Math.floor(current / SLIDES_PER_PAGE),
+    Math.max(pageCount - 1, 0)
+  );
+
   return (
     <div className="relative">
       <Carousel
@@ -54,32 +66,36 @@ export function ProjectCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-2" />
-        <CarouselNext className="right-2" />
       </Carousel>
 
-      <div
-        className="mt-4 flex justify-center gap-2"
-        role="tablist"
-        aria-label="Carousel slides"
+      {/* Numbered stepper: active page indicator + pagination in one control. */}
+      <nav
+        aria-label="Portfolio pages"
+        className="mt-4 flex items-center justify-center gap-3"
       >
-        {projects.map((project, index) => (
-          <button
-            key={project.id}
-            type="button"
-            role="tab"
-            aria-selected={index === current}
-            aria-label={`Go to slide ${index + 1}: ${project.title}`}
-            onClick={() => api?.scrollTo(index)}
-            className={cn(
-              "size-2.5 rounded-full transition-colors",
-              index === current
-                ? "bg-primary"
-                : "bg-border hover:bg-muted-foreground/40"
+        {Array.from({ length: pageCount }).map((_, pageIndex) => (
+          <div key={pageIndex} className="flex items-center gap-3">
+            {pageIndex > 0 && (
+              <span aria-hidden className="h-px w-10 bg-border" />
             )}
-          />
+            <button
+              type="button"
+              onClick={() => api?.scrollTo(pageIndex * SLIDES_PER_PAGE)}
+              aria-label={`Go to page ${pageIndex + 1}`}
+              aria-current={activePage === pageIndex ? "true" : undefined}
+              className={cn(
+                "flex size-9 items-center justify-center rounded-full text-sm font-medium transition-colors outline-none",
+                "focus-visible:ring-3 focus-visible:ring-ring/50",
+                activePage === pageIndex
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {pageIndex + 1}
+            </button>
+          </div>
         ))}
-      </div>
+      </nav>
     </div>
   );
 }

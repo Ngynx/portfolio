@@ -18,6 +18,10 @@ import {
   Cloud,
   Code,
   Terminal,
+  Network,
+  Waypoints,
+  Lock,
+  ListChecks,
   type LucideIcon,
 } from "lucide-react";
 
@@ -42,6 +46,10 @@ export const iconMap: Record<string, LucideIcon | undefined> = {
   Cloud,
   Code,
   Terminal,
+  Network,
+  Waypoints,
+  Lock,
+  ListChecks,
 };
 
 export function resolveIcon(name: string): LucideIcon | undefined {

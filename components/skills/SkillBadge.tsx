@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
-import type { Skill } from "@/types/content";
+import type { Skill, SkillLevel } from "@/types/content";
 
-const levelLabel: Record<Skill["level"], string> = {
+const levelLabel: Record<SkillLevel, string> = {
   beginner: "Beginner",
   intermediate: "Intermediate",
   advanced: "Advanced",
@@ -10,7 +10,10 @@ const levelLabel: Record<Skill["level"], string> = {
 
 export function SkillBadge({ skill }: { skill: Skill }) {
   return (
-    <Badge variant="outline" title={`Level: ${levelLabel[skill.level]}`}>
+    <Badge
+      variant="outline"
+      title={skill.level ? `Level: ${levelLabel[skill.level]}` : undefined}
+    >
       {skill.name}
     </Badge>
   );

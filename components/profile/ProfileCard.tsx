@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { StatusPill } from "@/components/profile/StatusPill";
 import { StatList } from "@/components/profile/StatList";
+import { cvDownloadUrl } from "@/lib/data/links";
 import type { Profile } from "@/types/content";
 
 export function ProfileCard({ profile }: { profile: Profile }) {
@@ -29,13 +30,12 @@ export function ProfileCard({ profile }: { profile: Profile }) {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-2 pt-1 sm:justify-start">
-            {/* CV file pending — portfolio.pdf is intentionally not served statically */}
-            <Button
-              asChild
-              className="rounded-full"
-              aria-disabled
-            >
-              <a href="#" onClick={(e) => e.preventDefault()}>
+            <Button asChild className="rounded-full">
+              <a
+                href={cvDownloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Download aria-hidden />
                 Download CV
               </a>
