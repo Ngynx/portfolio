@@ -3,6 +3,7 @@ import type { Profile } from "@/types/content";
 export const profile: Profile = {
   name: "Alex Rivera",
   title: "Backend Engineer · Freelance",
+  // avatar: unset — when a photo exists, put it under public/ and set e.g. "/avatar.jpg".
   location: "Remote · UTC±3",
   availability: "Available for new projects",
   bio: "I design and build reliable backend systems: APIs, event-driven pipelines, and data platforms. I care about clean contracts, observable services, and code that the next engineer can actually read.",

@@ -2,7 +2,14 @@ import { iconMap } from "@/lib/icons";
 import { navigation } from "@/lib/data/navigation";
 import { cn } from "cn";
 
-export function NavLinks({ className }: { className?: string }) {
+export function NavLinks({
+  className,
+  collapsed = false,
+}: {
+  className?: string;
+  /** Icon-only chips in the collapsed sidebar rail. Topbar leaves this false. */
+  collapsed?: boolean;
+}) {
   return (
     <nav aria-label="Primary" className={className}>
       {navigation.map((item) => {
@@ -11,14 +18,22 @@ export function NavLinks({ className }: { className?: string }) {
           <a
             key={item.href}
             href={item.href}
+            title={collapsed ? item.label : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors",
+              "text-sm font-medium text-muted-foreground transition-colors",
               "hover:bg-muted hover:text-foreground",
-              "focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              "focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+              collapsed
+                ? "flex size-9 items-center justify-center rounded-lg p-0"
+                : "flex items-center gap-3 rounded-lg px-3 py-2"
             )}
           >
             {Icon ? <Icon className="size-4 shrink-0" aria-hidden /> : null}
-            {item.label}
+            {collapsed ? (
+              <span className="sr-only">{item.label}</span>
+            ) : (
+              item.label
+            )}
           </a>
         );
       })}
