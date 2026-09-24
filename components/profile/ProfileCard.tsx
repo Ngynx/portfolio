@@ -1,30 +1,19 @@
 "use client";
 
 import { Download, MapPin } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { StatusPill } from "@/components/profile/StatusPill";
 import { StatList } from "@/components/profile/StatList";
 import type { Profile } from "@/types/content";
 
 export function ProfileCard({ profile }: { profile: Profile }) {
-  const initials = profile.name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
   return (
     <Card>
       <CardContent className="flex flex-col items-center gap-5 text-center sm:flex-row sm:items-start sm:text-left">
-        <Avatar size="lg" className="size-16 shrink-0">
-          <AvatarFallback className="bg-[#e8f5e9] text-lg font-semibold text-[#0b6b0b]">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
+        <ProfileAvatar size="lg" className="size-16 shrink-0" />
 
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-between">

@@ -1,6 +1,8 @@
 export interface Profile {
   name: string;
   title: string;
+  /** URL/path to a profile photo (lives under public/ when set). */
+  avatar?: string;
   location: string;
   availability: string;
   bio: string;
