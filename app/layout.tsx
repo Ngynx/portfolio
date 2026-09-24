@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alex Rivera — Backend Engineer Freelance",
+  title: "Aldo Rodrigo — Backend Engineer Freelance",
   description:
-    "Portfolio of Alex Rivera, backend engineer building reliable APIs, event-driven pipelines, and data platforms.",
+    "Portfolio of Aldo Rodrigo, backend engineer building reliable APIs, event-driven pipelines, and data platforms.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

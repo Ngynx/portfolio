@@ -44,6 +44,20 @@ export function PortfolioSection({ projects }: { projects: Project[] }) {
   const selectedProject =
     projects.find((project) => project.id === openProjectId) ?? null;
 
+  const goPrev = useCallback(() => {
+    if (projects.length === 0) return;
+    const idx = projects.findIndex((project) => project.id === openProjectId);
+    if (idx === -1) return;
+    openProject(projects[(idx - 1 + projects.length) % projects.length].id);
+  }, [projects, openProjectId, openProject]);
+
+  const goNext = useCallback(() => {
+    if (projects.length === 0) return;
+    const idx = projects.findIndex((project) => project.id === openProjectId);
+    if (idx === -1) return;
+    openProject(projects[(idx + 1) % projects.length].id);
+  }, [projects, openProjectId, openProject]);
+
   return (
     <section id="portfolio" className="scroll-mt-20 space-y-6">
       <FadeIn>
@@ -61,7 +75,12 @@ export function PortfolioSection({ projects }: { projects: Project[] }) {
         <ProjectCarousel projects={projects} onSelect={openProject} />
       </FadeIn>
 
-      <ProjectModal project={selectedProject} onClose={closeProject} />
+      <ProjectModal
+        project={selectedProject}
+        onClose={closeProject}
+        onPrev={goPrev}
+        onNext={goNext}
+      />
     </section>
   );
 }

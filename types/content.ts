@@ -9,9 +9,12 @@ export interface Profile {
   stats: { label: string; value: string }[];
 }
 
+export type SkillLevel = "beginner" | "intermediate" | "advanced" | "expert";
+
 export interface Skill {
   name: string;
-  level: "beginner" | "intermediate" | "advanced" | "expert";
+  /** Optional — source data may not include proficiency levels. */
+  level?: SkillLevel;
 }
 
 export interface SkillGroup {
@@ -41,11 +44,11 @@ export interface ProjectImage {
 export interface Project {
   id: string;
   title: string;
+  role: string;
   summary: string;
   cover: string;
   gallery: ProjectImage[];
   tags: string[];
-  details: string[];
   link?: string;
 }
 
@@ -53,4 +56,13 @@ export interface NavigationItem {
   label: string;
   href: string;
   icon: string;
+}
+
+export type SocialIconName = "github" | "gitlab" | "linkedin" | "email";
+
+export interface SocialLink {
+  name: string;
+  /** Absolute http(s) URL, or mailto: for email. */
+  href: string;
+  icon: SocialIconName;
 }

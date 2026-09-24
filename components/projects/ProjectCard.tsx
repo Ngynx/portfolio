@@ -22,10 +22,10 @@ export function ProjectCard({
     <button
       type="button"
       onClick={onOpen}
-      className="group w-full text-left focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-xl"
+      className="group flex-1 text-left focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-xl"
       aria-label={`View project details: ${project.title}`}
     >
-      <Card className="h-full gap-3 py-0 transition-shadow group-hover:shadow-md">
+      <Card className="flex h-full flex-col gap-3 py-0 transition-shadow group-hover:shadow-md">
         <div className="relative aspect-video w-full overflow-hidden rounded-t-xl">
           <Image
             src={project.cover}
@@ -41,7 +41,7 @@ export function ProjectCard({
             {project.summary}
           </CardDescription>
         </CardHeader>
-        <CardContent className="pb-4">
+        <CardContent className="mt-auto pb-4">
           <SkillBadgeList tags={project.tags.slice(0, 3)} />
         </CardContent>
       </Card>

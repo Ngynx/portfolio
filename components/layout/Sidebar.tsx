@@ -14,6 +14,7 @@ import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { BrandMonogram } from "@/components/brand/BrandMonogram";
 import { BrandWordmark } from "@/components/brand/BrandWordmark";
 import { profile } from "@/lib/data/profile";
+import { cvDownloadUrl } from "@/lib/data/links";
 import { cn } from "cn";
 
 type SidebarProps = {
@@ -105,7 +106,6 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
         />
 
         <div className="mt-auto">
-          {/* CV file pending — portfolio.pdf is intentionally not served statically */}
           <Button
             asChild
             variant="outline"
@@ -113,12 +113,12 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
               "rounded-full",
               isCollapsed ? "size-9 p-0" : "w-full"
             )}
-            aria-disabled
           >
             <a
-              href="#"
+              href={cvDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               title="Download CV"
-              onClick={(e) => e.preventDefault()}
             >
               <Download aria-hidden />
               {isCollapsed ? (

@@ -5,6 +5,7 @@ import { BioSection } from "@/components/profile/BioSection";
 import { SkillGroup } from "@/components/skills/SkillGroup";
 import { EmploymentSection } from "@/components/experience/EmploymentSection";
 import { PortfolioSection } from "@/components/projects/PortfolioSection";
+import { ConnectSection } from "@/components/links/ConnectSection";
 import { ContactCTA } from "@/components/contact/ContactCTA";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion";
 import { profile } from "@/lib/data/profile";
@@ -61,6 +62,8 @@ export default function Home() {
         <Suspense fallback={<PortfolioFallback />}>
           <PortfolioSection projects={projects} />
         </Suspense>
+
+        <ConnectSection />
 
         <ContactCTA />
       </div>

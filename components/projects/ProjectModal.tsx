@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,9 +17,13 @@ import type { Project } from "@/types/content";
 export function ProjectModal({
   project,
   onClose,
+  onPrev,
+  onNext,
 }: {
   project: Project | null;
   onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -28,6 +33,9 @@ export function ProjectModal({
     }
   }, [project?.id]);
 
+  const navButtonClassName =
+    "absolute top-1/2 z-10 flex size-12 md:size-14 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 shadow-md backdrop-blur hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 motion-safe:transition-[background-color,transform] motion-safe:duration-150 motion-safe:hover:scale-110 motion-safe:active:scale-95";
+
   return (
     <Dialog
       open={project !== null}
@@ -35,7 +43,10 @@ export function ProjectModal({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="flex max-h-[85vh] w-full max-w-2xl flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl">
+      {/* No `overflow-hidden` on purpose: the nav arrows sit outside the
+          modal edges (negative offsets) and would be clipped by it. Corner
+          rounding is unaffected — children paint no background. */}
+      <DialogContent className="flex max-h-[85vh] w-full max-w-2xl flex-col gap-0 p-0 sm:max-w-2xl">
         <DialogHeader className="shrink-0 border-b border-border px-6 py-4 pr-12">
           <DialogTitle className="text-lg">
             {project?.title ?? "Project"}
@@ -45,7 +56,33 @@ export function ProjectModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+        {project ? (
+          <>
+            <button
+              type="button"
+              onClick={onPrev}
+              className={`${navButtonClassName} -left-4 md:-left-12 lg:-left-20`}
+              aria-label="Previous project"
+              title="Previous project"
+            >
+              <ChevronLeft className="size-6 md:size-7" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={onNext}
+              className={`${navButtonClassName} -right-4 md:-right-12 lg:-right-20`}
+              aria-label="Next project"
+              title="Next project"
+            >
+              <ChevronRight className="size-6 md:size-7" aria-hidden="true" />
+            </button>
+          </>
+        ) : null}
+
+        <div
+          ref={scrollRef}
+          className="min-h-0 flex-1 overflow-y-auto px-10 py-5 md:px-6"
+        >
           <AnimatePresence mode="wait" initial={false}>
             {project ? (
               <motion.div
@@ -58,17 +95,32 @@ export function ProjectModal({
               >
                 <ProjectGallery images={project.gallery} />
 
-                <section className="space-y-2" aria-label="Project details">
-                  <h3 className="text-sm font-medium text-foreground">Details</h3>
-                  <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
-                    {project.details.map((detail) => (
-                      <li key={detail}>{detail}</li>
-                    ))}
-                  </ul>
+                <section className="space-y-2" aria-label="My role">
+                  <h3 className="text-sm font-medium text-foreground">
+                    My role.
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{project.role}</p>
                 </section>
 
-                <section className="space-y-2" aria-label="Tech stack">
-                  <h3 className="text-sm font-medium text-foreground">Stack</h3>
+                <section
+                  className="space-y-2"
+                  aria-label="Project description"
+                >
+                  <h3 className="text-sm font-medium text-foreground">
+                    Project description.
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {project.summary}
+                  </p>
+                </section>
+
+                <section
+                  className="space-y-2"
+                  aria-label="Skills and deliverables"
+                >
+                  <h3 className="text-sm font-medium text-foreground">
+                    Skills and deliverables
+                  </h3>
                   <SkillBadgeList tags={project.tags} />
                 </section>
               </motion.div>
