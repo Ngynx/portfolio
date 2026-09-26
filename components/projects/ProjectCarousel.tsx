@@ -16,6 +16,11 @@ import type { Project } from "@/types/content";
  * two fixed pages of 3 slots: slides [0..2] and [3..4]. Page starts are chunk
  * offsets, which also stay meaningful at md (2-up) and mobile (1-up): clicking
  * page 2 always lands on the first project of the second chunk.
+ *
+ * Embla CLAMPS the last snaps per breakpoint (5 slides at lg 3-up → snaps
+ * 0..2 only), so raw `floor(current / 3)` would resolve to page 1 forever on
+ * desktop: page starts must be clamped to the live snap list too, and the
+ * active page is the last clamped start ≤ current.
  */
 const SLIDES_PER_PAGE = 3;
 
@@ -28,16 +33,20 @@ export function ProjectCarousel({
 }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [snapCount, setSnapCount] = useState(() => Math.max(projects.length, 1));
 
   const onSelectSlide = useCallback((carouselApi: CarouselApi) => {
     if (!carouselApi) return;
     setCurrent(carouselApi.selectedScrollSnap());
+    setSnapCount(carouselApi.scrollSnapList().length);
   }, []);
 
   useEffect(() => {
     if (!api) return;
     // Subscribe only — initial `current` is already 0, which matches embla's
-    // starting snap. Avoids setState directly in the effect body.
+    // starting snap, and the default snapCount (projects.length) is
+    // conservative: pageStart clamps higher, so the first click still lands
+    // on the clamped snap and `select` then syncs both values for real.
     api.on("select", onSelectSlide);
     api.on("reInit", onSelectSlide);
     return () => {
@@ -47,9 +56,12 @@ export function ProjectCarousel({
   }, [api, onSelectSlide]);
 
   const pageCount = Math.ceil(projects.length / SLIDES_PER_PAGE);
-  const activePage = Math.min(
-    Math.floor(current / SLIDES_PER_PAGE),
-    Math.max(pageCount - 1, 0)
+  const lastSnap = Math.max(snapCount - 1, 0);
+  const pageStart = (pageIndex: number) =>
+    Math.min(pageIndex * SLIDES_PER_PAGE, lastSnap);
+  const activePage = Array.from({ length: pageCount }).reduce(
+    (active, _, pageIndex) => (current >= pageStart(pageIndex) ? pageIndex : active),
+    0
   );
 
   return (
@@ -80,7 +92,7 @@ export function ProjectCarousel({
             )}
             <button
               type="button"
-              onClick={() => api?.scrollTo(pageIndex * SLIDES_PER_PAGE)}
+              onClick={() => api?.scrollTo(pageStart(pageIndex))}
               aria-label={`Go to page ${pageIndex + 1}`}
               aria-current={activePage === pageIndex ? "true" : undefined}
               className={cn(

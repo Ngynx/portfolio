@@ -2,7 +2,9 @@ import Image from "next/image";
 
 /**
  * Brand wordmark served from /public/brand/wordmark.svg (26×13 viewBox).
- * Rendered at 2:1 aspect (52×26) and sized via className (h-5 w-auto).
+ * Rendered at 2:1 aspect and sized via className (h-6 w-auto = 48×24) —
+ * h-6 matches the 24px line-box of the sidebar's `text-base` profile name
+ * so the two visual weights line up.
  *
  * Decorative by design (alt="") — the surrounding Link carries the
  * accessible name via its aria-label.
@@ -17,7 +19,7 @@ export function BrandWordmark() {
       alt=""
       width={52}
       height={26}
-      className="h-5 w-auto"
+      className="h-6 w-auto"
     />
   );
 }
