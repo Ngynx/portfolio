@@ -27,6 +27,13 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
   const isCollapsed = !open;
   const reduceMotion = useReducedMotion();
   const wordmarkDuration = reduceMotion ? 0 : 0.15;
+  /* Must mirror the aside's CSS width transition (duration-200 + default
+     `ease` timing) so layout="position" glides on the SAME curve as the
+     shrinking rail — otherwise rows and edge drift apart mid-transition. */
+  const railShift = {
+    duration: reduceMotion ? 0 : 0.2,
+    ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
+  };
 
   return (
     <aside
@@ -40,20 +47,19 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
       {/*
         The aside stays mounted in both states so aria-controls="main-sidebar"
         always resolves; `hidden` removes it from the a11y tree below lg.
-        Width (w-64 ↔ w-16) is CSS-transitioned (motion-safe), while the
-        brand row morphs in place via framer-motion — no key remounts.
+        Container geometry is IDENTICAL in both states (p-6, gap-6,
+        items-center + w-full rows): rows live in the same content box and
+        only their inner justify flips left↔center, which layout="position"
+        tweens on the same easing as the width transition. In the rail the
+        content box is 16px wide centred at x=32 — the rail's own centre — so
+        centred rows land exactly on the rail axis.
       */}
-      <div
-        className={cn(
-          "flex h-full flex-col",
-          isCollapsed ? "items-center gap-6 px-2 py-6" : "gap-8 p-6"
-        )}
-      >
+      <div className="flex h-full flex-col items-center gap-6 p-6">
         {/* BRAND ROW */}
         <LayoutGroup>
           <div
             className={cn(
-              "flex items-center",
+              "flex w-full items-center",
               isCollapsed ? "justify-center" : "justify-between"
             )}
           >
@@ -83,35 +89,73 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
           </div>
         </LayoutGroup>
 
-        {/* Avatar/name only when expanded — the rail shows icons only. */}
-        {!isCollapsed && (
-          <div className="flex items-center gap-3">
+        {/* Avatar row renders in BOTH states for rail symmetry — name/title
+            only when expanded (the rail shows icons only). The initials avatar
+            is the profile entry point (its nav item was removed as redundant).
+            Fixed h-11 (44px) in BOTH states: the name/title block (text-base
+            24 + 2 + text-xs 16 = 42px) is taller than the 40px avatar, so
+            without a fixed height unmounting it on collapse would shrink the
+            row ~10px and yank every row below upward. layout="position" glides
+            the row left↔centre on the rail's easing — no vertical delta left
+            to animate. */}
+        <motion.div
+          layout="position"
+          transition={railShift}
+          className={cn(
+            "flex h-11 w-full items-center gap-3",
+            isCollapsed ? "justify-center" : "justify-start"
+          )}
+        >
+          <a
+            href="#profile"
+            aria-label="Go to profile"
+            className="rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
             <ProfileAvatar size="default" />
+          </a>
+          {!isCollapsed && (
             <div className="min-w-0 flex-1">
-              <p className="truncate font-heading text-lg font-semibold text-sidebar-foreground">
+              <p className="truncate font-heading text-base font-semibold text-sidebar-foreground">
                 {profile.name}
               </p>
-              <p className="mt-0.5 truncate text-sm text-muted-foreground">
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">
                 {profile.title}
               </p>
             </div>
-          </div>
-        )}
+          )}
+        </motion.div>
 
-        <NavLinks
-          collapsed={isCollapsed}
-          className={
-            isCollapsed ? "flex flex-col items-center gap-1" : "flex flex-col gap-1"
-          }
-        />
+        <motion.div
+          layout="position"
+          transition={railShift}
+          className="w-full"
+        >
+          <NavLinks
+            collapsed={isCollapsed}
+            className={
+              isCollapsed
+                ? "flex flex-col items-center gap-1"
+                /* -mx-3 cancels the link's px-3 so nav icons sit on the same
+                   left column (p-6) as the avatar, wordmark and CV pill. */
+                : "-mx-3 flex flex-col gap-1"
+            }
+          />
+        </motion.div>
 
-        <div className="mt-auto">
+        <motion.div
+          layout="position"
+          transition={railShift}
+          className="mt-auto flex w-full justify-center"
+        >
           <Button
             asChild
             variant="outline"
             className={cn(
               "rounded-full",
-              isCollapsed ? "size-9 p-0" : "w-full"
+              /* h-9 both states: default Button size is h-8 (32px) — pairing it
+                 with the rail's size-9 chip (36px) would shift the bottom-anchored
+                 (mt-auto) pill's top edge 4px on every toggle. */
+              isCollapsed ? "size-9 p-0" : "h-9 w-full"
             )}
           >
             <a
@@ -128,7 +172,7 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
               )}
             </a>
           </Button>
-        </div>
+        </motion.div>
       </div>
     </aside>
   );
