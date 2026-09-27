@@ -4,12 +4,14 @@ import { useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
 import { Footer } from "@/components/layout/Footer";
+import { SmoothCursor } from "@/components/cursor/SmoothCursor";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div className="flex min-h-screen">
+      {/* <SmoothCursor /> */}
       <Sidebar
         open={sidebarOpen}
         onToggle={() => setSidebarOpen((value) => !value)}
