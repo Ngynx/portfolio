@@ -1,0 +1,57 @@
+import {
+  User,
+  Layers,
+  Briefcase,
+  FolderKanban,
+  Mail,
+  MapPin,
+  Clock,
+  Zap,
+  Server,
+  Shield,
+  Rocket,
+  Gauge,
+  Users,
+  Download,
+  Menu,
+  Database,
+  Cloud,
+  Code,
+  Terminal,
+  Network,
+  Waypoints,
+  Lock,
+  ListChecks,
+  type LucideIcon,
+} from "lucide-react";
+
+/** Stable module-level icon map (safe to read during render). */
+export const iconMap: Record<string, LucideIcon | undefined> = {
+  User,
+  Layers,
+  Briefcase,
+  FolderKanban,
+  Mail,
+  MapPin,
+  Clock,
+  Zap,
+  Server,
+  Shield,
+  Rocket,
+  Gauge,
+  Users,
+  Download,
+  Menu,
+  Database,
+  Cloud,
+  Code,
+  Terminal,
+  Network,
+  Waypoints,
+  Lock,
+  ListChecks,
+};
+
+export function resolveIcon(name: string): LucideIcon | undefined {
+  return iconMap[name];
+}
